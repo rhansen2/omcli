@@ -30,7 +30,7 @@ type Command struct {
 	// Run runs the command
 	Run func(*Command, []string)
 
-	SubCommands []*Command
+	subCommands []*Command
 
 	root *Command
 }
@@ -41,7 +41,7 @@ func (c *Command) AddCommand(command *Command) {
 		panic("commands can only be added to a root")
 	}
 	command.root = c
-	c.SubCommands = append(c.SubCommands, command)
+	c.subCommands = append(c.subCommands, command)
 }
 
 // Execute runs the command
@@ -100,7 +100,7 @@ func (c *Command) doHelp(name string) {
 }
 
 func (c *Command) findCommand(name string) *Command {
-	for _, cmd := range c.SubCommands {
+	for _, cmd := range c.subCommands {
 		if cmd.Name == name && cmd.runnable() {
 			return cmd
 		}
@@ -124,7 +124,7 @@ func (c *Command) help() {
 	if c.root == nil {
 		c.printf("Usage:\n     %s command [arguments]\n\n", c.Name)
 		c.printf("Available commands:\n\n")
-		for _, cmd := range c.SubCommands {
+		for _, cmd := range c.subCommands {
 			if cmd.runnable() {
 				c.printf("%+10s     %s\n", cmd.Name, cmd.Short)
 			}
